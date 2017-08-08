@@ -440,7 +440,7 @@ BotLevel = function(msg, sender, nmsg)
 		
 		scm("|cff00ccff[BOT] |cff"..BotColor(sender)..x.." is level: "..BotLevelPlayer(x).." ("..BotNameXp(x).." Xp)|r", "GUILD")
 	else
-		scm("|cff00ccff[BOT] |cff"..BotColor(sender)..sender.." is level: "..BotLevelPlayer(sender).." ("..BotNameXp(x).." Xp)|r", "GUILD")
+		scm("|cff00ccff[BOT] |cff"..BotColor(sender)..sender.." is level: "..BotLevelPlayer(sender).." ("..BotNameXp(sender).." Xp)|r", "GUILD")
 	end
 end
 
