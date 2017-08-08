@@ -117,22 +117,25 @@ BotAutoAnswer = function(msg, event)
 							local f = CreateFrame("FRAME")
 							f:RegisterEvent("CHAT_MSG_GUILD")
 							f:SetScript("OnEvent", function(_, _, newmsg) 
-								if not string.find(newmsg, "?$") and not string.find(newmsg, "^"..prefix.."%a+") then
+								if not string.find(newmsg, "?$") and not string.find(newmsg, "^"..prefix.."%a+") and not string.find(newmsg, "[bot]") then
 									f:SetScript("OnEvent", nil) 
 									f:UnregisterAllEvents() 
 									ABB.aa[msg] = newmsg 
 								end
 							end)
-						
+							C_Timer.After(10, function() f:SetScript("OnEvent", nil) f:UnregisterAllEvents() end)
+							
 							_ABBTemp = f
 						else
 							_ABBTemp:SetScript("OnEvent", function(_, _, newmsg) 
-								if not string.find(newmsg, "?$") and not string.find(newmsg, "^"..prefix.."%a+") then
+								if not string.find(newmsg, "?$") and not string.find(newmsg, "^"..prefix.."%a+") and not string.find(newmsg, "[bot]") then
 									_ABBTemp:SetScript("OnEvent", nil) 
 									_ABBTemp:UnregisterAllEvents() 
 									ABB.aa[msg] = newmsg 
 								end
 							end)
+							
+							C_Timer.After(10, function() f:SetScript("OnEvent", nil) f:UnregisterAllEvents() end)
 						end
 				
 						return false, nil
