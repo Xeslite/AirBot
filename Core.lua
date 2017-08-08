@@ -345,7 +345,7 @@ BotSetQuote = function(msg, sender, nmsg)
 	
 		if quotecheck == false then
 			if quote ~= nil then
-				if not string.find(quote:lower(), "traps") and not string.find(quote:lower(), "gay") and not (string.find(quote:lower(), "arent") or string.find(quote:lower(), "aint") or not string.find(quote:lower(), "aren't") or not string.find(quote:lower(), "ain't") or not string.find(quote:lower(), "not")) then
+				if not string.find(quote:lower(), "traps") and not string.find(quote:lower(), "gay") and not (string.find(quote:lower(), "arent") or string.find(quote:lower(), "aint") or string.find(quote:lower(), "aren't") or string.find(quote:lower(), "ain't") or string.find(quote:lower(), "not")) then
 					ABB.BQS[sender] = quote
 					scm("|cff00ccff[BOT] |cff"..BotColor(sender).."Quote set for: "..sender.."|r", "GUILD")
 				else
