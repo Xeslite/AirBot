@@ -93,20 +93,19 @@ BotAutoAnswer = function(msg, event)
 				
 						if string.find(msg, v) then
 							treplace = v
-							break
-						end
-					end
-				
-					local k,v = nil, nil
-					for x=1,#variable do
-						k,v = next(variable, k)
+							k,v = nil, nil
+								for x=1,#variable do
+									k,v = next(variable, k)
 
-						if not string.find(msg, v) then
-							if ABB.aa[gsub(msg, treplace, v)] ~= nil then
-								check = true
-								msg = gsub(msg, treplace, v)
-								break
-							end
+									if not string.find(msg, v) then
+										if ABB.aa[gsub(msg, treplace, v)] ~= nil then
+											check = true
+											msg = gsub(msg, treplace, v)
+											break
+										end
+									end
+								end
+							break
 						end
 					end
 				
