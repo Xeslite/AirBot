@@ -1,0 +1,9 @@
+## Interface: 71500
+## Title: AirBot
+## Author: Toothless
+## Version: 1
+## Notes: HELPINGSTUFF
+## DefaultState: Enabled
+## SavedVariables: ABB
+Core.lua
+Strings.lua
