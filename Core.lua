@@ -62,7 +62,7 @@ eventFrame:SetScript("OnEvent", function(_, event, msg, sender)
 		scm(aamsg,"GUILD")
 	end
 end)
-
+--teaew
 BotAutoAnswer = function(msg, event)
 	local question = {"what","how","when","where","why","how"}
 	local o,p = nil,nil
