@@ -3,11 +3,12 @@ local eventFrame = CreateFrame("FRAME");
 local BotOwner = UnitName("player");
 local BotCommands = {"showerthought", "color", "quote", "setquote", "randomquote", "uptime", "level", "leaderboard", "credit"};
 local BotSoonStorage = {};
-local BotCredit = {"Monty","Chase","Deramyr","Elaena"};
+local BotCredit = {"Monty","Chase","Deramyr","Elaena","Dismay"};
 local prefix = "+"
 local refcd = true;
-local trivia = false;
+local joincd = true;
 local _ABBTemp = nil;
+local recording = true;
 
 ABB = {};
 ABB.xp = {};
@@ -56,7 +57,7 @@ eventFrame:SetScript("OnEvent", function(_, event, msg, sender)
 				guildresponses[cmd](msg, sender, nmsg);
 			end
 		elseif event == "CHAT_MSG_SYSTEM" then
-			SystemResponseCheck(msg);
+			SystemResponseCheck(msg, nmsg);
 		end
 	else
 		scm(aamsg,"GUILD")
@@ -65,9 +66,9 @@ end)
 
 BotAutoAnswer = function(msg, event)
 	local question = {"what","how","when","where","why","how"}
-	local o,p = nil,nil
-	for x=1,#question do o,p = next(question, o)
-		if string.find(msg, p) then
+	local k,v = nil,nil
+	for x=1,#question do k,v = next(question, k)
+		if string.find(msg, v) then
 			local msg = gsub(msg, " ", "")
 			local msg = gsub(msg, "'", "")
 			local msg = gsub(msg, "%.", "")
@@ -80,14 +81,14 @@ BotAutoAnswer = function(msg, event)
 			if event == "CHAT_MSG_SYSTEM" then
 				return false, nil
 			elseif string.find(msg, "?$") then
-				if ABB.aa[msg] ~= nil then
+				if ABB.aa[msg] ~= nil and recording == false then
 					return true, "|cff00ccff[BOT] |cff"..BotColor(sender)..ABB.aa[msg].."|r"
 				else
 					local variable = {"is","are","was","were"}
 					local check = false
 					local treplace = nil
 				
-					local k,v = nil, nil
+					k,v = nil, nil
 					for x=1,#variable do
 						k,v = next(variable, k)
 				
@@ -109,7 +110,7 @@ BotAutoAnswer = function(msg, event)
 						end
 					end
 				
-					if check == true then
+					if check == true and recording == false then
 						return true, "|cff00ccff[BOT] |cff"..BotColor(sender)..ABB.aa[msg].."|r"
 					else
 						if _ABBTemp == nil then
@@ -134,7 +135,7 @@ BotAutoAnswer = function(msg, event)
 								end
 							end)
 							
-							C_Timer.After(10, function() f:SetScript("OnEvent", nil) f:UnregisterAllEvents() end)
+							C_Timer.After(10, function() _ABBTemp:SetScript("OnEvent", nil) _ABBTemp:UnregisterAllEvents() end)
 						end
 				
 						return false, nil
@@ -312,8 +313,9 @@ BotRandomQuote = function()
 	end
 end
 
-BotQuote = function(msg, sender, nmsg)
-	local player = string.match(nmsg, prefix.."%a* (.*)")
+BotQuote = function(sender, nmsg)
+	local player = nil
+	if nmsg ~= nil then player = string.match(nmsg, prefix.."%a* (.*)") end
 	
 	if player == nil then
 		if ABB.BQS[sender] ~= nil then 
@@ -423,6 +425,24 @@ BotClearName = function(sender)
 	end
 end
 
+BotGuildOnline = function(name)
+	local n = GetNumGuildMembers()
+	local check = false
+	
+	for x=1,n do
+		local c = GetGuildRosterInfo(x)
+		c = BotClearName(c)
+		
+		if name == c then
+			check = true
+			
+			break
+		end
+	end
+	
+	return check
+end
+
 BotColorSequence = function(msg, sender)
 	local k = BotSetColor(msg, sender)
 	
@@ -430,6 +450,14 @@ BotColorSequence = function(msg, sender)
 		BotSetColor(msg, sender) scm("|cff00ccff[BOT] |cffffffff"..sender.."'s color set to: |cff"..BotColor(sender)..BotColor(sender).."|r", "GUILD")
 	else
 		scm("|cff00ccff[BOT] |cff"..BotColor(sender).."No color found. Try again. ("..prefix.."color HEXID)|r", "GUILD")
+	end
+end
+
+BotOnlineQuote = function(name)
+	if ABB.BQS[name] ~= nil then 
+		return ABB.BQS[name]
+	else 
+		return "Welcome back online, "..name
 	end
 end
 
@@ -448,7 +476,7 @@ guildresponses = {
 	showerthought = function(msg, sender) scm("|cff00ccff[BOT] |cff"..BotColor(sender)..BotShowerthought(msg).."|r", "GUILD") end,
 	addshowerthought = function(msg, sender, nmsg) BotAddShower(msg, sender, nmsg) end,
 	setcolor = function(msg, sender) BotColorSequence(msg, sender) end,
-	quote = function(msg, sender, nmsg) scm("|cff00ccff[BOT] |cff"..BotColor(sender)..BotQuote(msg, sender, nmsg).."|r", "GUILD") end,
+	quote = function(msg, sender, nmsg) scm("|cff00ccff[BOT] |cff"..BotColor(sender)..BotQuote(sender, nmsg).."|r", "GUILD") end,
 	randomquote = function(msg, sender) scm("|cff00ccff[BOT] |cff"..BotColor(sender)..BotRandomQuote().."|r", "GUILD") end,
 	setquote = function(msg, sender, nmsg) BotSetQuote(msg, sender, nmsg) end,
 	ERROR = function(msg, sender) scm("|cff00ccff[BOT] |cff"..BotColor(sender).."No command like that exists!|r", "GUILD") end,
@@ -462,6 +490,7 @@ guildresponses = {
 systemreponses = {
 	refresh = function() scm(".ph ann |cff00ccff[BOT] |cff"..BotColor(nil).."Refreshed!|r", "GUILD") scm(".ph ref","GUILD") end,
 	welcome = function() scm("|cff33ccff[BOT] |cff"..BotColor(nil).."Welcome to the guild!|r","GUILD") end,
+	online = function(msg) scm("|cff33ccff[BOT] |cff"..BotColor(msg)..BotOnlineQuote(msg).."|r","GUILD") end,
 }
 
 GuildResponseCheck = function(event, msg, sender)
@@ -474,10 +503,23 @@ GuildResponseCheck = function(event, msg, sender)
 		end
 end
 
-SystemResponseCheck = function(msg)
+SystemResponseCheck = function(msg, nmsg)
 	local x = nil 
+	local check = false
 	if string.find(msg, " has joined the guild.") then
 		x = "welcome"
+		joincd = false
+		C_Timer.After(1, function() joincd = true end)
+	elseif string.find(msg, " has come online.") then
+		if joincd == true then
+			local name = string.match(nmsg, "%[(.*)%]")
+			check = BotGuildOnline(name)
+			
+			if check == true then
+				x = "online"
+				msg = name
+			end
+		end
 	else
 		x = nil
 	end
